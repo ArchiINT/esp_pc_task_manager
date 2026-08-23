@@ -1,0 +1,118 @@
+menu "PC Monitor: display (ST7789)"
+
+    comment "Wiring - defaults match the ESP32-S3 mini reference build"
+
+    config PCMON_LCD_PIN_SCLK
+        int "SPI SCLK (display SCL/CLK)"
+        range 0 48
+        default 1
+
+    config PCMON_LCD_PIN_MOSI
+        int "SPI MOSI (display SDA/DIN)"
+        range 0 48
+        default 2
+
+    config PCMON_LCD_PIN_RST
+        int "Reset (RES), -1 if tied to EN"
+        range -1 48
+        default 3
+
+    config PCMON_LCD_PIN_DC
+        int "Data/Command (DC)"
+        range 0 48
+        default 4
+
+    config PCMON_LCD_PIN_CS
+        int "Chip select (CS), -1 if tied to GND"
+        range -1 48
+        default 5
+
+    config PCMON_LCD_PIN_BL
+        int "Backlight (BLK), -1 if always on"
+        range -1 48
+        default 6
+
+    config PCMON_LCD_BL_ACTIVE_LOW
+        bool "Backlight is active low"
+        default n
+
+    config PCMON_BUTTON_GPIO
+        int "Page button GPIO (-1 to disable, 0 = BOOT button)"
+        range -1 48
+        default 0
+        help
+            Short press switches to the next page, long press (>1 s) toggles
+            automatic page cycling.  The pin is driven with an internal pull-up
+            and is expected to be pulled to GND when pressed.
+
+    comment "Panel"
+
+    config PCMON_LCD_H_RES
+        int "Horizontal resolution"
+        default 240
+
+    config PCMON_LCD_V_RES
+        int "Vertical resolution"
+        default 240
+
+    config PCMON_LCD_X_GAP
+        int "Panel X offset"
+        default 0
+        help
+            Some 240x240 modules expose the controller's 240x320 frame buffer
+            with an offset.  Increase if the image is shifted horizontally.
+
+    config PCMON_LCD_Y_GAP
+        int "Panel Y offset"
+        default 0
+
+    config PCMON_LCD_MIRROR_X
+        bool "Mirror horizontally"
+        default n
+
+    config PCMON_LCD_MIRROR_Y
+        bool "Mirror vertically"
+        default n
+
+    config PCMON_LCD_SWAP_XY
+        bool "Swap X and Y (rotate 90 degrees)"
+        default n
+
+    config PCMON_LCD_INVERT_COLOR
+        bool "Invert colors"
+        default y
+        help
+            Required by virtually every IPS ST7789 module; turn off if the image
+            comes out as a photo negative.
+
+    config PCMON_LCD_PIXEL_CLOCK_MHZ
+        int "SPI pixel clock, MHz"
+        range 10 80
+        default 40
+        help
+            40 MHz is safe with jumper wires.  Short, well routed traces usually
+            tolerate 60-80 MHz, which roughly halves the full-frame flush time.
+
+    config PCMON_LCD_BUFFER_LINES
+        int "LVGL draw buffer height, lines"
+        range 10 240
+        default 40
+        help
+            Two buffers of H_RES x this many pixels are allocated in internal
+            DMA-capable RAM (240 x 40 x 2 B = 19 kB each by default).
+
+    config PCMON_LCD_BRIGHTNESS
+        int "Default backlight brightness, %"
+        range 0 100
+        default 85
+
+    config PCMON_LCD_SELFTEST
+        bool "Paint solid colour screens at boot"
+        default n
+        help
+            Before LVGL starts, fill the panel with red, green, blue and white
+            for about a second each, straight through esp_lcd.  Seeing the four
+            colours proves the wiring and the ST7789 init sequence, which
+            narrows a blank screen down to the UI layer.
+
+endmenu

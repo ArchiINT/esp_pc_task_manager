@@ -1,0 +1,41 @@
+# ---------------------------------------------------------------------------
+# ESP32-S3 PC Monitor - project defaults
+#
+# Applied on the first `idf.py build`; run `idf.py menuconfig` afterwards to
+# tweak anything (pins live under "PC Monitor: display (ST7789)").
+# ---------------------------------------------------------------------------
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# --- Performance -----------------------------------------------------------
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_240=y
+CONFIG_FREERTOS_HZ=1000
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+CONFIG_SPI_MASTER_IN_IRAM=y
+CONFIG_SPI_MASTER_ISR_IN_IRAM=y
+
+# --- Flash / partitions ----------------------------------------------------
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# --- Console ---------------------------------------------------------------
+# The native USB port carries telemetry, so logs stay on UART0 (GPIO43/44).
+# Set CONFIG_ESP_CONSOLE_NONE=y instead if the UART pins are not broken out and
+# you want to save a little flash.
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+
+# --- LVGL ------------------------------------------------------------------
+CONFIG_LV_COLOR_DEPTH_16=y
+CONFIG_LV_MEM_SIZE_KILOBYTES=48
+CONFIG_LV_DEF_REFR_PERIOD=16
+CONFIG_LV_USE_PERF_MONITOR=n
+CONFIG_LV_USE_MEM_MONITOR=n
+CONFIG_LV_FONT_MONTSERRAT_12=y
+CONFIG_LV_FONT_MONTSERRAT_14=y
+CONFIG_LV_FONT_MONTSERRAT_16=y
+CONFIG_LV_FONT_MONTSERRAT_20=y
+CONFIG_LV_FONT_MONTSERRAT_28=y
+CONFIG_LV_ATTRIBUTE_FAST_MEM_USE_IRAM=y

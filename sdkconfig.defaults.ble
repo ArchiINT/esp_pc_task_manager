@@ -1,0 +1,24 @@
+# ---------------------------------------------------------------------------
+# Overlay that switches the link from USB to Bluetooth LE.
+#
+#   idf.py -D SDKCONFIG_DEFAULTS="sdkconfig.defaults;sdkconfig.defaults.ble" \
+#          fullclean build flash
+#
+# (delete sdkconfig first, or the previous choice sticks)
+# ---------------------------------------------------------------------------
+
+CONFIG_PCMON_LINK_BLE=y
+
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+CONFIG_BT_NIMBLE_ROLE_PERIPHERAL=y
+CONFIG_BT_NIMBLE_ROLE_BROADCASTER=y
+CONFIG_BT_NIMBLE_ROLE_CENTRAL=n
+CONFIG_BT_NIMBLE_ROLE_OBSERVER=n
+CONFIG_BT_NIMBLE_MAX_CONNECTIONS=1
+CONFIG_BT_NIMBLE_NVS_PERSIST=y
+
+# NimBLE plus LVGL no longer fit into a 3 MB app partition margin on 4 MB flash
+# with -O2, so trade a bit of speed for size in the BLE build.
+CONFIG_COMPILER_OPTIMIZATION_SIZE=y
+CONFIG_COMPILER_OPTIMIZATION_PERF=n

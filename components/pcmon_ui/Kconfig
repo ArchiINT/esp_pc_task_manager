@@ -1,0 +1,24 @@
+menu "PC Monitor: user interface"
+
+    config PCMON_UI_TASK_STACK
+        int "UI task stack size, bytes"
+        range 4096 32768
+        default 8192
+
+    config PCMON_UI_TASK_PRIO
+        int "UI task priority"
+        range 1 20
+        default 4
+        help
+            Below the transport task: decoding must never wait for a repaint.
+
+    config PCMON_UI_AUTOCYCLE_MS
+        int "Automatic page cycling interval, ms (0 = off)"
+        range 0 600000
+        default 0
+        help
+            Off by default: pages change on the button only.  Set a non-zero
+            interval to have them advance on their own as well, in which case a
+            long press toggles the cycling at runtime.
+
+endmenu

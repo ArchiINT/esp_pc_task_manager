@@ -1,0 +1,11 @@
+# Core telemetry
+psutil>=5.9
+
+# NVIDIA GPU readings (NVML bindings, module name: pynvml)
+nvidia-ml-py>=12.535
+
+# USB transport
+pyserial>=3.5
+
+# BLE transport (only needed with --transport ble)
+bleak>=0.22

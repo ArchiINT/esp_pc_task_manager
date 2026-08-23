@@ -1,0 +1,48 @@
+menu "PC Monitor: host link"
+
+    choice PCMON_LINK_TRANSPORT
+        prompt "Transport to the PC"
+        default PCMON_LINK_USB
+        help
+            How telemetry reaches the board.
+
+            USB is the recommended default: the board is powered from the same
+            cable, latency is sub-millisecond and no pairing is involved.
+
+            BLE requires the NimBLE stack; build with
+            "idf.py -D SDKCONFIG_DEFAULTS='sdkconfig.defaults;sdkconfig.defaults.ble' build"
+            so that Bluetooth is enabled in the low-level configuration as well.
+
+        config PCMON_LINK_USB
+            bool "USB (native USB-Serial-JTAG)"
+
+        config PCMON_LINK_BLE
+            bool "Bluetooth LE (NimBLE, Nordic UART Service)"
+    endchoice
+
+    config PCMON_LINK_TIMEOUT_MS
+        int "Host timeout, ms"
+        range 500 60000
+        default 3000
+        help
+            If no valid frame arrives within this window the link is considered
+            down and the UI switches to the "waiting for host" state.
+
+    config PCMON_LINK_TASK_STACK
+        int "Transport task stack size, bytes"
+        range 2048 16384
+        default 4096
+
+    config PCMON_LINK_TASK_PRIO
+        int "Transport task priority"
+        range 1 20
+        default 5
+        help
+            Kept above the UI task so that decoding never waits on rendering.
+
+    config PCMON_BLE_DEVICE_NAME
+        string "BLE advertised name"
+        depends on PCMON_LINK_BLE
+        default "ESP-PCMON"
+
+endmenu

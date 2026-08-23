@@ -1,0 +1,25 @@
+# Systemd *user* unit: starts the agent with your desktop session.
+#
+#   mkdir -p ~/.config/systemd/user
+#   cp pcmon-agent.service ~/.config/systemd/user/
+#   $EDITOR ~/.config/systemd/user/pcmon-agent.service   # check the paths below
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now pcmon-agent
+#   journalctl --user -u pcmon-agent -f
+
+[Unit]
+Description=ESP32-S3 PC Monitor agent
+After=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/esp/esp_pc/host
+ExecStart=%h/esp/esp_pc/host/.venv/bin/python %h/esp/esp_pc/host/pcmon_agent.py
+Restart=always
+RestartSec=5
+# The board disappears while reflashing; restarting quietly is expected.
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target
