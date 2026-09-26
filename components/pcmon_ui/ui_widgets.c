@@ -66,28 +66,32 @@ void ui_gauge_set_sub(ui_gauge_t *gauge, const char *text, lv_color_t color)
 
 /* -------------------------------------------------------------------------- */
 
-#define METER_H     30
-#define METER_BAR_H 8
+/* A wider panel would earn a bigger font here; a taller one only earns air. */
+#if UI_TALL
+#define METER_FONT  UI_FONT_SMALL
+#else
+#define METER_FONT  UI_FONT_TINY
+#endif
 
 void ui_meter_create(ui_meter_t *meter, lv_obj_t *parent, int32_t w, lv_color_t color,
                      const char *caption)
 {
-    meter->root = ui_container_create(parent, w, METER_H);
+    meter->root = ui_container_create(parent, w, UI_METER_H);
 
-    meter->caption = ui_label_create(meter->root, UI_FONT_TINY, UI_COLOR_TEXT_DIM, caption);
+    meter->caption = ui_label_create(meter->root, METER_FONT, UI_COLOR_TEXT_DIM, caption);
     lv_obj_align(meter->caption, LV_ALIGN_TOP_LEFT, 0, 0);
 
-    meter->value = ui_label_create(meter->root, UI_FONT_TINY, UI_COLOR_TEXT, "--");
+    meter->value = ui_label_create(meter->root, METER_FONT, UI_COLOR_TEXT, "--");
     lv_obj_align(meter->value, LV_ALIGN_TOP_RIGHT, 0, 0);
 
     meter->bar = lv_bar_create(meter->root);
-    lv_obj_set_size(meter->bar, w, METER_BAR_H);
+    lv_obj_set_size(meter->bar, w, UI_METER_BAR_H);
     lv_obj_align(meter->bar, LV_ALIGN_BOTTOM_LEFT, 0, 0);
     lv_bar_set_range(meter->bar, 0, 1000);
     lv_bar_set_value(meter->bar, 0, LV_ANIM_OFF);
-    lv_obj_set_style_radius(meter->bar, METER_BAR_H / 2, LV_PART_MAIN);
+    lv_obj_set_style_radius(meter->bar, UI_METER_BAR_H / 2, LV_PART_MAIN);
     lv_obj_set_style_bg_color(meter->bar, UI_COLOR_TRACK, LV_PART_MAIN);
-    lv_obj_set_style_radius(meter->bar, METER_BAR_H / 2, LV_PART_INDICATOR);
+    lv_obj_set_style_radius(meter->bar, UI_METER_BAR_H / 2, LV_PART_INDICATOR);
     lv_obj_set_style_bg_color(meter->bar, color, LV_PART_INDICATOR);
 }
 
@@ -120,7 +124,7 @@ void ui_meter_set_pm(ui_meter_t *meter, uint16_t value_pm, const char *text)
 
 void ui_stat_create(ui_stat_t *stat, lv_obj_t *parent, int32_t w, const char *key)
 {
-    stat->root = ui_container_create(parent, w, 18);
+    stat->root = ui_container_create(parent, w, UI_STAT_H);
 
     stat->key = ui_label_create(stat->root, UI_FONT_TINY, UI_COLOR_TEXT_DIM, key);
     lv_obj_align(stat->key, LV_ALIGN_LEFT_MID, 0, 0);
@@ -131,6 +135,7 @@ void ui_stat_create(ui_stat_t *stat, lv_obj_t *parent, int32_t w, const char *ke
 
 /* -------------------------------------------------------------------------- */
 
+/* 16 bars per row on a 208 px wide page, so 32 threads fill exactly two rows. */
 #define COREBAR_W   10
 #define COREBAR_GAP 3
 

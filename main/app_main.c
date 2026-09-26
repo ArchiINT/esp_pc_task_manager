@@ -2,7 +2,7 @@
  * ESP32-S3 PC Monitor
  *
  * Renders live telemetry (uptime, CPU, RAM, NVIDIA GPU) pushed by a small agent
- * running on the PC to a 240x240 IPS ST7789 panel.
+ * running on the PC to a 2.8" 240x320 IPS ST7789 panel.
  *
  *   host agent  --USB CDC / BLE NUS-->  pcmon_link  -->  pcmon_ui  -->  ST7789
  *

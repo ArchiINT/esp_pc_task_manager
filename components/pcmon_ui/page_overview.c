@@ -14,14 +14,27 @@
 #define GAUGE_ARC_W 7
 #define GAUGE_FONT  UI_FONT_SMALL
 #define GAUGE_X     2
+#define GAUGE_Y     0
 #define INFO_Y      64
 #define RAM_Y       86
 #define VRAM_Y      120
+#elif UI_TALL
+/* 240x320: two 110 px dials still fit across the 240 px width with an 8 px
+ * gutter, and the freed height goes into spacing the two memory bars out. */
+#define GAUGE_SIZE  110
+#define GAUGE_ARC_W 10
+#define GAUGE_FONT  UI_FONT_LARGE
+#define GAUGE_X     6
+#define GAUGE_Y     8
+#define INFO_Y      122
+#define RAM_Y       160
+#define VRAM_Y      216
 #else
 #define GAUGE_SIZE  102
 #define GAUGE_ARC_W 9
 #define GAUGE_FONT  UI_FONT_LARGE
 #define GAUGE_X     8
+#define GAUGE_Y     0
 #define RAM_Y       106
 #define VRAM_Y      138
 #endif
@@ -43,11 +56,11 @@ static void overview_create(lv_obj_t *parent)
 {
     ui_gauge_create(&s_page.cpu, parent, GAUGE_SIZE, UI_COLOR_CPU, "CPU",
                     GAUGE_FONT, GAUGE_ARC_W);
-    lv_obj_align(s_page.cpu.root, LV_ALIGN_TOP_LEFT, GAUGE_X, 0);
+    lv_obj_align(s_page.cpu.root, LV_ALIGN_TOP_LEFT, GAUGE_X, GAUGE_Y);
 
     ui_gauge_create(&s_page.gpu, parent, GAUGE_SIZE, UI_COLOR_GPU, "GPU",
                     GAUGE_FONT, GAUGE_ARC_W);
-    lv_obj_align(s_page.gpu.root, LV_ALIGN_TOP_RIGHT, -GAUGE_X, 0);
+    lv_obj_align(s_page.gpu.root, LV_ALIGN_TOP_RIGHT, -GAUGE_X, GAUGE_Y);
 
     ui_meter_create(&s_page.ram, parent, METER_W, UI_COLOR_RAM, "RAM");
     lv_obj_align(s_page.ram.root, LV_ALIGN_TOP_MID, 0, RAM_Y);
@@ -58,7 +71,7 @@ static void overview_create(lv_obj_t *parent)
     s_page.cpu_clock = ui_label_create(parent, UI_FONT_TINY, UI_COLOR_TEXT_DIM, "-- GHz");
     s_page.gpu_power = ui_label_create(parent, UI_FONT_TINY, UI_COLOR_TEXT_DIM, "-- W");
 
-#if UI_NARROW
+#if UI_NARROW || UI_TALL
     /* Straight under the dials: the bottom of the page belongs to the bars. */
     lv_obj_align(s_page.cpu_clock, LV_ALIGN_TOP_LEFT, GAUGE_X, INFO_Y);
     lv_obj_align(s_page.gpu_power, LV_ALIGN_TOP_RIGHT, -GAUGE_X, INFO_Y);

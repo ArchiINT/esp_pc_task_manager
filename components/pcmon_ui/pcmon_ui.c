@@ -1,18 +1,19 @@
 /*
  * PC Monitor - UI task and page manager.
  *
- * Screen layout (240x240):
+ * Screen layout (240x320; the 240x240 and 135x240 panels use the same three
+ * bands with a shorter header, footer and content area - see ui_theme.h):
  *
  *   +--------------------------------------+  0
- *   | * HOSTNAME                  04:21:07 |  header, 24 px
- *   +--------------------------------------+  24
+ *   | * HOSTNAME                  04:21:07 |  header, 28 px
+ *   +--------------------------------------+  28
  *   |                                      |
- *   |   active page (all pages stacked,    |  content
+ *   |   active page (all pages stacked,    |  content, 278 px
  *   |   inactive ones simply hidden)       |
  *   |                                      |
- *   +--------------------------------------+  230
- *   |             *  o  o  o               |  page indicator, 10 px
- *   +--------------------------------------+  240
+ *   +--------------------------------------+  306
+ *   |             *  o  o  o               |  page indicator, 14 px
+ *   +--------------------------------------+  320
  */
 #include "pcmon_ui.h"
 
@@ -54,9 +55,27 @@ static const char *TAG = "pcmon_ui";
 #if UI_NARROW
 #define HEADER_UPTIME_FONT  UI_FONT_TINY
 #define HEADER_UPTIME_W     58
+#elif UI_TALL
+/* The 28 px header of the 2.8" panel has room for a 16 px face; the hostname
+ * stays small so it keeps as many characters as before. */
+#define HEADER_UPTIME_FONT  UI_FONT_MEDIUM
+#define HEADER_UPTIME_W     92
 #else
 #define HEADER_UPTIME_FONT  UI_FONT_SMALL
 #define HEADER_UPTIME_W     78
+#endif
+
+/* Link dot and page dots scale with the band they live in. */
+#if UI_TALL
+#define HEADER_DOT_D        10
+#define HEADER_HOST_X       26
+#define PAGE_DOT_D          8
+#define PAGE_DOT_SPACING    16
+#else
+#define HEADER_DOT_D        8
+#define HEADER_HOST_X       22
+#define PAGE_DOT_D          6
+#define PAGE_DOT_SPACING    12
 #endif
 
 static const ui_page_t *const s_pages[] = {
@@ -104,7 +123,7 @@ static void header_create(lv_obj_t *screen)
     lv_obj_set_style_bg_opa(header, LV_OPA_COVER, LV_PART_MAIN);
 
     s_ui.link_dot = lv_obj_create(header);
-    lv_obj_set_size(s_ui.link_dot, 8, 8);
+    lv_obj_set_size(s_ui.link_dot, HEADER_DOT_D, HEADER_DOT_D);
     lv_obj_set_style_radius(s_ui.link_dot, LV_RADIUS_CIRCLE, LV_PART_MAIN);
     lv_obj_set_style_border_width(s_ui.link_dot, 0, LV_PART_MAIN);
     lv_obj_set_style_bg_color(s_ui.link_dot, UI_COLOR_DANGER, LV_PART_MAIN);
@@ -116,9 +135,9 @@ static void header_create(lv_obj_t *screen)
     /* Bounded width plus ellipsis: a long hostname must not slide under the
      * uptime, which has no room to spare on a narrow panel. */
     lv_obj_set_width(s_ui.host_label,
-                     CONFIG_PCMON_LCD_H_RES - 22 - HEADER_UPTIME_W - 6);
+                     CONFIG_PCMON_LCD_H_RES - HEADER_HOST_X - HEADER_UPTIME_W - 6);
     lv_label_set_long_mode(s_ui.host_label, LV_LABEL_LONG_MODE_DOTS);
-    lv_obj_align(s_ui.host_label, LV_ALIGN_LEFT_MID, 22, 0);
+    lv_obj_align(s_ui.host_label, LV_ALIGN_LEFT_MID, HEADER_HOST_X, 0);
 
     s_ui.uptime_label = ui_label_create(header, HEADER_UPTIME_FONT, UI_COLOR_TEXT, "--:--:--");
     lv_obj_align(s_ui.uptime_label, LV_ALIGN_RIGHT_MID, -8, 0);
@@ -129,12 +148,12 @@ static void indicator_create(lv_obj_t *screen)
     lv_obj_t *bar = ui_container_create(screen, CONFIG_PCMON_LCD_H_RES, UI_FOOTER_H);
     lv_obj_align(bar, LV_ALIGN_BOTTOM_MID, 0, 0);
 
-    const int32_t spacing = 12;
+    const int32_t spacing = PAGE_DOT_SPACING;
     const int32_t x0      = -(int32_t)(PAGE_COUNT - 1) * spacing / 2;
 
     for (size_t i = 0; i < PAGE_COUNT; i++) {
         lv_obj_t *dot = lv_obj_create(bar);
-        lv_obj_set_size(dot, 6, 6);
+        lv_obj_set_size(dot, PAGE_DOT_D, PAGE_DOT_D);
         lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, LV_PART_MAIN);
         lv_obj_set_style_border_width(dot, 0, LV_PART_MAIN);
         lv_obj_set_style_bg_color(dot, UI_COLOR_TRACK, LV_PART_MAIN);

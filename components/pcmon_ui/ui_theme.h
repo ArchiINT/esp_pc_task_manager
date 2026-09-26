@@ -34,19 +34,33 @@ extern "C" {
 
 /* --- Geometry ------------------------------------------------------------ */
 
-#define UI_HEADER_H        24
-#define UI_FOOTER_H        10
+/*
+ * Two independent shape flags, both usable in #if - every operand is a plain
+ * integer:
+ *
+ *   UI_NARROW  panels too narrow for two columns of text side by side, so the
+ *              pages stack their rows and shrink the gauges.  A 135x240 module
+ *              lands here, a 240x240 or 240x320 one does not.
+ *   UI_TALL    the 2.8" 240x320 module: same width, ~80 px more height.  Width
+ *              is what bounds the text, so nothing about the fonts changes -
+ *              the extra pixels go into larger dials, taller meters and real
+ *              gaps between rows instead of a band of empty background.
+ */
+#define UI_NARROW          (CONFIG_PCMON_LCD_H_RES < 200)
+#define UI_TALL            (CONFIG_PCMON_LCD_V_RES >= 280)
+
+#define UI_HEADER_H        (UI_TALL ? 28 : 24)
+#define UI_FOOTER_H        (UI_TALL ? 14 : 10)
 #define UI_CONTENT_Y       UI_HEADER_H
 #define UI_CONTENT_H       (CONFIG_PCMON_LCD_V_RES - UI_HEADER_H - UI_FOOTER_H)
 
-/*
- * Panels this narrow cannot hold two columns of text side by side, so the pages
- * stack their rows instead and shrink the gauges.  A 135x240 module lands here,
- * a 240x240 one does not.  Usable in #if - both operands are plain integers.
- */
-#define UI_NARROW          (CONFIG_PCMON_LCD_H_RES < 200)
 #define UI_PAD             (UI_NARROW ? 8 : 16)
 #define UI_ROW_W           (CONFIG_PCMON_LCD_H_RES - 2 * UI_PAD)
+
+/* Row heights shared by the widgets, so a page only has to place the rows. */
+#define UI_METER_H         (UI_TALL ? 38 : 30)
+#define UI_METER_BAR_H     (UI_TALL ? 10 : 8)
+#define UI_STAT_H          (UI_TALL ? 24 : 18)
 
 /* --- Fonts --------------------------------------------------------------- */
 

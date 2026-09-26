@@ -16,13 +16,25 @@
 #define GAUGE_SIZE   100
 #define GAUGE_ARC_W  10
 #define STAT_W       ROW_W
+#define GAUGE_Y      14
 #define CLOCK_Y      120
 #define TEMP_Y       140
 #define CORES_H      44
+#elif UI_TALL
+/* 240x320: a 140 px dial, and the core bars get the ~76 px they need for two
+ * comfortable rows of 16 instead of two cramped ones. */
+#define GAUGE_SIZE   140
+#define GAUGE_ARC_W  13
+#define STAT_W       ((ROW_W - 8) / 2)
+#define GAUGE_Y      22
+#define CLOCK_Y      174
+#define TEMP_Y       174
+#define CORES_H      76
 #else
 #define GAUGE_SIZE   112
 #define GAUGE_ARC_W  11
 #define STAT_W       ((ROW_W - 8) / 2)
+#define GAUGE_Y      14
 #define CLOCK_Y      130
 #define TEMP_Y       130
 #define CORES_H      52
@@ -48,7 +60,7 @@ static void cpu_create(lv_obj_t *parent)
 
     ui_gauge_create(&s_page.load, parent, GAUGE_SIZE, UI_COLOR_CPU, "LOAD",
                     UI_FONT_HUGE, GAUGE_ARC_W);
-    lv_obj_align(s_page.load.root, LV_ALIGN_TOP_MID, 0, 14);
+    lv_obj_align(s_page.load.root, LV_ALIGN_TOP_MID, 0, GAUGE_Y);
 
     ui_stat_create(&s_page.clock, parent, STAT_W, "CLOCK");
     ui_stat_create(&s_page.temp, parent, STAT_W, "TEMP");

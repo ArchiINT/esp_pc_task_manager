@@ -1,6 +1,6 @@
 menu "PC Monitor: display (ST7789)"
 
-    comment "Wiring - defaults match the ESP32-S3 mini reference build"
+    comment "Wiring - defaults match the ESP32-S3 SuperMini reference build"
 
     config PCMON_LCD_PIN_SCLK
         int "SPI SCLK (display SCL/CLK)"
@@ -37,13 +37,17 @@ menu "PC Monitor: display (ST7789)"
         default n
 
     config PCMON_BUTTON_GPIO
-        int "Page button GPIO (-1 to disable, 0 = BOOT button)"
+        int "Page button GPIO (-1 to disable)"
         range -1 48
-        default 0
+        default 7
         help
             Short press switches to the next page, long press (>1 s) toggles
             automatic page cycling.  The pin is driven with an internal pull-up
-            and is expected to be pulled to GND when pressed.
+            and is expected to be pulled to GND when pressed, so a bare tact
+            switch between the pin and GND is all it takes.
+
+            GPIO7 rather than the BOOT button: the SuperMini does not break
+            GPIO0 out to a header.
 
     comment "Panel"
 
@@ -53,14 +57,15 @@ menu "PC Monitor: display (ST7789)"
 
     config PCMON_LCD_V_RES
         int "Vertical resolution"
-        default 240
+        default 320
 
     config PCMON_LCD_X_GAP
         int "Panel X offset"
         default 0
         help
-            Some 240x240 modules expose the controller's 240x320 frame buffer
-            with an offset.  Increase if the image is shifted horizontally.
+            A 240x320 module uses the controller's frame buffer end to end, so
+            no offset is needed.  Cropped panels (240x240, 135x240) expose it
+            with a gap - increase if the image is shifted horizontally.
 
     config PCMON_LCD_Y_GAP
         int "Panel Y offset"
@@ -80,10 +85,12 @@ menu "PC Monitor: display (ST7789)"
 
     config PCMON_LCD_INVERT_COLOR
         bool "Invert colors"
-        default y
+        default n
         help
-            Required by virtually every IPS ST7789 module; turn off if the image
-            comes out as a photo negative.
+            Off for the 2.8" 240x320 reference panel, which already comes up
+            inverted.  Most 240x240 IPS ST7789 modules need it on instead - turn
+            it on if the image comes out as a photo negative (white background
+            under the dark theme).
 
     config PCMON_LCD_PIXEL_CLOCK_MHZ
         int "SPI pixel clock, MHz"
@@ -95,11 +102,11 @@ menu "PC Monitor: display (ST7789)"
 
     config PCMON_LCD_BUFFER_LINES
         int "LVGL draw buffer height, lines"
-        range 10 240
-        default 40
+        range 10 320
+        default 48
         help
             Two buffers of H_RES x this many pixels are allocated in internal
-            DMA-capable RAM (240 x 40 x 2 B = 19 kB each by default).
+            DMA-capable RAM (240 x 48 x 2 B = 23 kB each by default).
 
     config PCMON_LCD_BRIGHTNESS
         int "Default backlight brightness, %"

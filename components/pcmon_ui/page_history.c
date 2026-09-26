@@ -15,6 +15,11 @@
  * the height that costs. */
 #define CHART_W             UI_ROW_W
 #define CHART_H             164
+#elif UI_TALL
+/* Width - and with it the point density - is unchanged, so the extra height
+ * simply buys vertical resolution: 1 % of load is now a visible step. */
+#define CHART_W             (CONFIG_PCMON_LCD_H_RES - 24)
+#define CHART_H             242
 #else
 #define CHART_W             (CONFIG_PCMON_LCD_H_RES - 24)
 #define CHART_H             170

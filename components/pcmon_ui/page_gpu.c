@@ -16,14 +16,27 @@
 #define GAUGE_SIZE  84
 #define GAUGE_ARC_W 9
 #define STAT_W      ROW_W
+#define GAUGE_Y     14
 #define CLOCK_Y     100
 #define POWER_Y     120
 #define VRAM_Y      142
 #define FAN_Y       174
+#elif UI_TALL
+/* 240x320: this page carries the most rows, so the dial grows the least and
+ * the two meters below it get a full row gap. */
+#define GAUGE_SIZE  124
+#define GAUGE_ARC_W 12
+#define STAT_W      ((ROW_W - 8) / 2)
+#define GAUGE_Y     20
+#define CLOCK_Y     154
+#define POWER_Y     154
+#define VRAM_Y      188
+#define FAN_Y       234
 #else
 #define GAUGE_SIZE  104
 #define GAUGE_ARC_W 11
 #define STAT_W      ((ROW_W - 8) / 2)
+#define GAUGE_Y     14
 #define CLOCK_Y     122
 #define POWER_Y     122
 #define VRAM_Y      142
@@ -51,7 +64,7 @@ static void gpu_create(lv_obj_t *parent)
 
     ui_gauge_create(&s_page.load, parent, GAUGE_SIZE, UI_COLOR_GPU, "LOAD",
                     UI_FONT_LARGE, GAUGE_ARC_W);
-    lv_obj_align(s_page.load.root, LV_ALIGN_TOP_MID, 0, 14);
+    lv_obj_align(s_page.load.root, LV_ALIGN_TOP_MID, 0, GAUGE_Y);
 
     ui_stat_create(&s_page.clock, parent, STAT_W, "CLOCK");
     ui_stat_create(&s_page.power, parent, STAT_W, "POWER");
